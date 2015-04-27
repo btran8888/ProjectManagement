@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var dbConfig = require('./db');
 var mongoose = require('mongoose');
 // Connect to DB
+
+console.log( 'connecting to mongo url: ' + dbConfig.url);
 mongoose.connect(dbConfig.url);
 
 var app = express();
@@ -67,8 +69,11 @@ if (app.get('env') === 'development') {
 module.exports = app;
 
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT ||	 process.env.PORT || 3000);
+app.set('ipaddr', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
 
-app.listen( app.get( 'port'), function() {
+console.log( "going to start app on port " + app.get('port') + "  and ip address " + app.get('ipaddr'));
+console.log( "OPENSHIFT_NODEJS_PORT: " + process.env.OPENSHIFT_NODEJS_PORT );
+app.listen( app.get( 'port'), app.get('ipaddr'), function() {
   console.log ( 'Express started on localhost: ' + app.get('port')) ;
 });
